@@ -1,13 +1,13 @@
 import numpy as np
-import pyaudio
-import audioop
+import pyaudio as pa
+import audioop as ao
 
 NOTE_MIN = 36
 NOTE_MAX = 96
 FSAMP = 22050
 FRAME_SIZE = 1024
 FRAMES_PER_FFT = 16
-THRESHOLD = 9000
+THRESHOLD = 7000
 
 SAMPLES_PER_FFT = FRAME_SIZE * FRAMES_PER_FFT
 FREQ_STEP = float(FSAMP)/SAMPLES_PER_FFT
@@ -29,7 +29,7 @@ imax = min(SAMPLES_PER_FFT,int(np.ceil(n2fft(NOTE_MAX+1))))
 buf = np.zeros(SAMPLES_PER_FFT,dtype=np.float32)
 frames = 0
 
-stream = pyaudio.PyAudio().open(format=pyaudio.paInt16,
+stream = pa.PyAudio().open(format=pa.paInt16,
                                 channels=1,
                                 rate=FSAMP,
                                 input=True,
@@ -46,7 +46,7 @@ while stream.is_active():
     freq = (np.abs(fft[imin:imax]).argmax()+imin)*FREQ_STEP
     n = f2n(freq)
     n0 = int(round(n))
-    volume = audioop.rms(data,2)
+    volume = ao.rms(data,2)
     frames += 1
 
     if (frames >= FRAMES_PER_FFT):
